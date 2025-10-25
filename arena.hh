@@ -12,13 +12,28 @@ struct Arena {
     size_t len;
     size_t cap;
 
+    struct Marker {
+        Arena &arena;
+        size_t len;
+
+        Marker(Arena &arena) : arena(arena), len(arena.len) {}
+        ~Marker() {
+            this->arena.reset(this->len);
+        }
+    };
+
     inline void reset(size_t marker) {
         assert(marker <= this->len && "Invalid marker");
         this->len = marker;
     }
+
+    Marker marker() {
+        return Marker{*this};
+    }
 };
 
 enum PushFlags {
+    PushFlags_None,
     PushFlags_Zero = 1,
 };
 
