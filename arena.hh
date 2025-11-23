@@ -43,6 +43,8 @@ static inline PushFlags defaultPushFlags() {
 }
 
 #define PUSH_STRUCT(Struct, arena) ((Struct *)pushSize(arena, sizeof(Struct)))
+#define PUSH_STRUCT_NO_CLEAR(Struct, arena) \
+    ((Struct *)pushSize(arena, sizeof(Struct), PushFlags_None))
 static void *pushSize(Arena *arena, size_t size,
                       PushFlags flags = defaultPushFlags()) {
     assert(arena->cap >= size && arena->len <= arena->cap - size &&
