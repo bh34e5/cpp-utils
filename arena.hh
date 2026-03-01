@@ -42,23 +42,15 @@ static inline PushFlags defaultPushFlags() {
     return flags;
 }
 
-#define PUSH_STRUCT(Struct, arena) ((Struct *)pushSize(arena, sizeof(Struct)))
+#define PUSH_STRUCT(Struct, arena) ((Struct *)pushSize((arena), sizeof(Struct)))
 #define PUSH_STRUCT_NO_CLEAR(Struct, arena) \
-    ((Struct *)pushSize(arena, sizeof(Struct), PushFlags_None))
-static void *pushSize(Arena *arena, size_t size,
-                      PushFlags flags = defaultPushFlags()) {
-    assert(arena->cap >= size && arena->len <= arena->cap - size &&
-           "Arena out of memory");
+    ((Struct *)pushSize((arena), sizeof(Struct), PushFlags_None))
 
-    void *res = (char *)arena->data + arena->len;
-    arena->len += size;
-
-    if (flags & PushFlags_Zero) {
-        memset(res, 0, size);
-    }
-
-    return res;
-}
+#define PUSH_LIST(Struct, arena, count) \
+    ((Struct *)pushSize((arena), (count) * sizeof(Struct)))
+#define PUSH_LIST_NO_CLEAR(Struct, arena, count) \
+    ((Struct *)pushSize((arena), (count) * sizeof(Struct), PushFlags_None))
 
 Arena makeArena(size_t initial_cap);
 Arena subArena(Arena *arena, size_t initial_cap);
+void *pushSize(Arena *arena, size_t size, PushFlags flags = defaultPushFlags());

@@ -30,3 +30,17 @@ Arena subArena(Arena *arena, size_t initial_cap) {
 
     return res;
 }
+
+void *pushSize(Arena *arena, size_t size, PushFlags flags) {
+    assert(arena->cap >= size && arena->len <= arena->cap - size &&
+           "Arena out of memory");
+
+    void *res = (char *)arena->data + arena->len;
+    arena->len += size;
+
+    if (flags & PushFlags_Zero) {
+        memset(res, 0, size);
+    }
+
+    return res;
+}
