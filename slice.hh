@@ -18,6 +18,28 @@ template <typename T> struct Slice {
 
     T const *cbegin() { return this->ptr; }
     T const *cend() { return this->ptr + this->len; }
+
+    Slice<T> slice(size_t start) {
+        assert(start <= this->len);
+
+        if (start == this->len) {
+            return Slice<T>{0, nullptr};
+        }
+
+        return Slice<T>{this->len - start, this->ptr + start};
+    }
+
+    Slice<T> slice(size_t start, size_t end) {
+        assert(start <= this->len);
+        assert(end <= this->len);
+        assert(start <= end);
+
+        if (start == end) {
+            return Slice<T>{0, nullptr};
+        }
+
+        return Slice<T>{end - start, this->ptr + start};
+    }
 };
 
 template<typename T>
